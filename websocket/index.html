@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Chat</title>
+  <style>
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+
+<body>
+<ul id="messages"></ul>
+<form id="chat-form">
+  <input type="text" id="message-input" autocomplete="off" />
+  <button type="submit">Gửi</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  // Xử lý sự kiện submit form
+  document.getElementById('chat-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+    if (message !== '') {
+      // Gửi tin nhắn tới server
+      socket.emit('chat message', message);
+      messageInput.value = '';
+    }
+  });
+
+  // Nhận tin nhắn từ server và hiển thị lên giao diện
+  socket.on('chat message', (message) => {
+    const messagesList = document.getElementById('messages');
+    const li = document.createElement('li');
+    li.textContent = message;
+    messagesList.appendChild(li);
+  });
+</script>
+</body>
+
+</html>
